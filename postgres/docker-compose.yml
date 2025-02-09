@@ -31,7 +31,7 @@ services:
     image: dpage/pgadmin4
     restart: unless-stopped
     environment:
-      PGADMIN_DEFAULT_EMAIL: "admin@lazaga.net"
+      PGADMIN_DEFAULT_EMAIL: "admin@hostname.domain.tld"
       PGADMIN_DEFAULT_PASSWORD: "<generate-pgadmin-password>"
     networks:
       - database

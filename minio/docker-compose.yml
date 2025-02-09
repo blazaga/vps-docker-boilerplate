@@ -4,6 +4,10 @@ version: "3"
 networks:
   frontend:
     external: true
+  
+volumes:
+  minio-data: 
+    # external: true <-- Uncomment if you want to use an existing volume that's using another volume driver
 
 services:
   minio:
@@ -14,7 +18,7 @@ services:
     networks:
       - frontend
     volumes:
-      - /mnt/disk1/minio/data:/data
+      - minio-data:/data
     environment:
       MINIO_ACCESS_KEY: <generate-access-key>
       MINIO_SECRET_KEY: <generate-secret-key>
