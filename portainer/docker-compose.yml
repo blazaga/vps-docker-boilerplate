@@ -1,0 +1,31 @@
+---
+services:
+  portainer:
+    image: portainer/portainer-ce:latest    
+    container_name: portainer
+    command: --no-analytics -H unix:///var/run/docker.sock
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 9000:9000
+      - 8000:8000
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - portainer_data:/data
+    networks:
+      - frontend
+    labels:
+      traefik.enable: true
+      traefik.http.routers.portainer.entrypoints: web
+      traefik.http.routers.portainer.rule: Host(`portainer.hostname.domain.tld`)
+      traefik.http.services.portainer.loadbalancer.server.port: 9000
+
+volumes:
+  portainer_data:
+
+networks: 
+  frontend:
+    external: true
+  

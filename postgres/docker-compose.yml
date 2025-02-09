@@ -1,0 +1,48 @@
+---
+# Add volumes definition to create volume mysql-data referenced above
+volumes:
+  postgresql-data:
+  pgadmin-data:
+
+networks:
+  database:
+    external: true
+  frontend: 
+    external: true
+
+services:
+  db:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=<generate-postgres-password>
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - "postgresql-data:/var/lib/postgresql/data"
+    networks:
+      - database
+
+  pgadmin:
+    depends_on:
+      - postgres
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@lazaga.net"
+      PGADMIN_DEFAULT_PASSWORD: "<generate-pgadmin-password>"
+    networks:
+      - database
+      - frontend
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    labels: 
+      traefik.enable: true
+      traefik.http.routers.pgadmin.rule: Host(`pg-admin.hostname.domain.tld`)
+      traefik.http.routers.pgadmin.entrypoints: web
+      traefik.http.routers.pgadmin.service: pgadmin
+      traefik.http.services.pgadmin.loadbalancer.server.port: 80
+
+

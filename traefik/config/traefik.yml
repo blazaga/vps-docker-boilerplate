@@ -1,0 +1,20 @@
+---
+api:
+  insecure: true
+entryPoints:
+  web:
+    address: ':80'
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+log:
+  level: DEBUG
+providers:
+  docker:
+    exposedByDefault: false
+    # Specify discovery network - This ensures correct name resolving and possible issues with containers, that are in multiple networks.
+    # E.g. Database container in a separate network and a container in the frontend and database network.
+    network: frontend
+  file:
+    directory: /etc/traefik
+    watch: true

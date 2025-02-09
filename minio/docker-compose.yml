@@ -1,0 +1,33 @@
+
+version: "3"
+
+networks:
+  frontend:
+    external: true
+
+services:
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9100:9000"
+    networks:
+      - frontend
+    volumes:
+      - /mnt/disk1/minio/data:/data
+    environment:
+      MINIO_ACCESS_KEY: <generate-access-key>
+      MINIO_SECRET_KEY: <generate-secret-key>
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.minio.rule: Host(`minio.hostname.domain.tld`)
+      traefik.http.routers.minio.entrypoints: web
+      traefik.http.routers.minio.service: minio
+      traefik.http.services.minio.loadbalancer.server.port: 9001
+      
+      traefik.http.routers.s3.rule: Host(`s3.hostname.domain.tld`)
+      traefik.http.routers.s3.entrypoints: web
+      traefik.http.routers.s3.service: s3
+      traefik.http.services.s3.loadbalancer.server.port: 9000
